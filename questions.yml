@@ -1,0 +1,279 @@
+labels:
+  io.cattle.role: cluster # options are cluster/project
+  io.rancher.app_min_version: 7.3.8
+categories:
+- Blog
+- CMS
+questions:
+- variable: defaultImage
+  default: true
+  description: "Use default Docker image"
+  label: Use Default Image
+  type: boolean
+  show_subquestion_if: false
+  group: "Container Images"
+  subquestions:
+  - variable: image.repository
+    default: "gitlab/gitlab-ce"
+    description: "Gitlab image name"
+    type: string
+    label: Gitlab Image Name
+  - variable: image.tag
+    default: "9.4.1-ce.0"
+    description: "Gitlab image tag"
+    type: string
+    label: Image Tag
+  - variable: volumePermissions.image.repository
+    default: "bitnami/minideb"
+    description: "VolumePermissions image name"
+    type: string
+    label: VolumePermissions Image Name
+  - variable: volumePermissions.image.tag
+    default: "buster"
+    description: "VolumePermissions image tag"
+    type: string
+    label: VolumePermissions Image Tag 
+- variable: postgresql.enabled
+  default: true
+  description: "Deploy a database server as part of this deployment, or set to false and configure an external database connection."
+  type: boolean
+  required: true
+  label: Install postgresql
+  show_subquestion_if: true
+  group: "postgresql Settings"
+  subquestions:
+  - variable: gitlab-ce.postgresql.imageTag
+    default: "9.6"
+    description: "postgresql imageTag"
+    type: int
+    required: true
+    label: postgresql imageTag 
+  - variable: gitlab-ce.postgresql.cpu
+    default: "1000m"
+    description: "postgresql cpu"
+    type: string
+    required: true
+    label: Postgresql CPU 
+  - variable: gitlab-ce.postgresql.memory
+    default: "1Gi"
+    description: "postgresql memory"
+    type: string
+    required: true
+    label: Postgresql Memory
+  - variable: gitlab-ce.postgresql.postgresUser
+    default: "gitlab"
+    description: "Postgresql User"
+    type: string
+    required: true
+    label: Postgresql User
+  - variable: gitlab-ce.postgresql.postgresPassword
+    default: "gitlab"
+    description: "Postgresql Password"
+    type: password
+    required: true
+    label: Postgresql Password
+  - variable: gitlab-ce.postgresql.postgresDatabase
+    default: "gitlab"
+    description: "Postgresql Database"
+    type: string
+    required: true
+    label: Postgresql Database
+  - variable: gitlab-ce.postgresql.persistence.enabled
+    default: false
+    description: "enable persistence storage for PostgreSQL"
+    type: boolean
+    label: Enable Persistent Storage for PostgreSQL
+  - variable: gitlab-ce.postgresql.persistence.size
+    default: 20Gi
+    description: "PostgreSQL persistent volume size"
+    type: string
+    label: PostgreSQL Persistent Volume Size
+    show_if: "postgresql.enabled=true&&gitlab-ce.postgresql.persistence.enabled=true"
+  - variable: gitlab-ce.postgresql.persistence.storageClass
+    default: ""
+    description: "If undefined or null, uses the default StorageClass. Default to null"
+    type: storageclass
+    label: Default StorageClass for PostgreSQL
+    show_if: "postgresql.enabled=true&&gitlab-ce.postgresql.persistence.enabled=true"
+  - variable: gitlab-ce.postgresql.resources.requests.cpu
+    default: "200m"
+    description: "PostgreSQL initial cpu request"
+    type: string
+    label: PostgreSQL Initial CPU Request
+    show_if: "postgresql.enabled=true"
+  - variable: gitlab-ce.postgresql.resources.requests.memory
+    default: "500Mi"
+    description: "PostgreSQL initial memory request"
+    type: string
+    label: PostgreSQL Initial Memory Request
+    show_if: "postgresql.enabled=true"
+  - variable: gitlab-ce.postgresql.resources.limits.cpu
+    default: "1"
+    description: "PostgreSQL cpu limit"
+    type: string
+    label: PostgreSQL CPU Limit
+    show_if: "postgresql.enabled=true"
+  - variable: gitlab-ce.postgresql.resources.limits.memory
+    default: "1Gi"
+    description: "PostgreSQL memory limit"
+    type: string
+    label: PostgreSQL Memory Limit
+    show_if: "postgresql.enabled=true"
+- variable: redis.enabled
+  default: true
+  description: "Deploy a database server as part of this deployment, or set to false and configure an external database connection."
+  type: boolean
+  required: true
+  label: Install redis
+  show_subquestion_if: true
+  group: "redis Settings"
+  subquestions:
+  - variable: gitlab-ce.redis.redisPassword
+    default: "gitlab"
+    description: "Redis Password"
+    type: password
+    required: true
+    label: Redis Password  
+  - variable: gitlab-ce.redis.persistence.enabled
+    default: false
+    description: "enable persistence storage for redis"
+    type: boolean
+    label: Enable Persistent Storage for redis
+  - variable: gitlab-ce.redis.persistence.size
+    default: 20Gi
+    description: "redis persistent volume size"
+    type: string
+    label: redis Persistent Volume Size
+    show_if: "redis.enabled=true&&gitlab-ce.redis.persistence.enabled=true"
+  - variable: gitlab-ce.redis.persistence.storageClass
+    default: ""
+    description: "If undefined or null, uses the default StorageClass. Default to null"
+    type: storageclass
+    label: Default StorageClass for redis
+    show_if: "redis.enabled=true&&gitlab-ce.redis.persistence.enabled=true"
+  - variable: gitlab-ce.redis.resources.requests.cpu
+    default: "200m"
+    description: "redis initial cpu request"
+    type: string
+    label: redis Initial CPU Request
+    show_if: "redis.enabled=true"
+  - variable: gitlab-ce.redis.resources.requests.memory
+    default: "500Mi"
+    description: "redis initial memory request"
+    type: string
+    label: redis Initial Memory Request
+    show_if: "redis.enabled=true"
+  - variable: gitlab-ce.redis.resources.limits.cpu
+    default: "1"
+    description: "redis cpu limit"
+    type: string
+    label: redis CPU Limit
+    show_if: "redis.enabled=true"
+  - variable: gitlab-ce.redis.resources.limits.memory
+    default: "1Gi"
+    description: "redis memory limit"
+    type: string
+    label: redis Memory Limit
+    show_if: "redis.enabled=true"
+- variable: persistence.gitlabEtc.enabled
+  default: false
+  description: "Enable persistent volume for GitlabEtc"
+  type: boolean
+  required: true
+  label: GitlabEtc Persistent Volume Enabled
+  show_subquestion_if: true
+  group: "Gitlab Settings"
+  subquestions:
+  - variable: persistence.gitlabEtc.size
+    default: "1Gi"
+    description: "GitlabEtc Persistent Volume Size"
+    type: string
+    label: GitlabEtc Volume Size
+  - variable: persistence.gitlabEtc.storageClass
+    default: ""
+    description: "If undefined or null, uses the default StorageClass. Default to null"
+    type: storageclass
+    label: Default StorageClass for GitlabEtc
+  - variable: persistence.gitlabEtc.existingClaim
+    default: ""
+    description: "If not empty, uses the specified existing PVC instead of creating new one"
+    type: pvc
+    label: Existing Persistent Volume Claim for GitlabEtc
+  - variable: persistence.gitlabEtc.accessMode
+    default: "ReadWriteOnce"
+    description: "persistence gitlabEtc accessMode"
+    type: string
+    label: persistence gitlabEtc accessMode
+- variable: persistence.gitlabData.enabled
+  default: false
+  description: "Enable persistent volume for GitlabData"
+  type: boolean
+  required: true
+  label: GitlabData Persistent Volume Enabled
+  show_subquestion_if: true
+  group: "Gitlab Settings"
+  subquestions:
+  - variable: persistence.gitlabData.size
+    default: "10Gi"
+    description: "GitlabData Persistent Volume Size"
+    type: string
+    label: GitlabData Volume Size
+  - variable: persistence.gitlabData.storageClass
+    default: ""
+    description: "If undefined or null, uses the default StorageClass. Default to null"
+    type: storageclass
+    label: Default StorageClass for GitlabData
+  - variable: persistence.gitlabData.existingClaim
+    default: ""
+    description: "If not empty, uses the specified existing PVC instead of creating new one"
+    type: pvc
+    label: Existing Persistent Volume Claim for GitlabData
+  - variable: persistence.gitlabData.accessMode
+    default: "ReadWriteOnce"
+    description: "persistence gitlabData accessMode"
+    type: string
+    label: persistence gitlabData accessMode
+- variable: ingress.enabled
+  default: true
+  description: "Expose app using Layer 7 Load Balancer - ingress"
+  type: boolean
+  label: Expose app using Layer 7 Load Balancer
+  show_subquestion_if: true
+  group: "Services and Load Balancing"
+  subquestions:
+  - variable: ingress.url
+    default: "xip.io"
+    description: "Hostname to your app installation"
+    type: hostname
+    required: true
+    label: Hostname
+- variable: service.type
+  default: "NodePort"
+  description: "Gitlab Service type"
+  type: enum
+  show_if: "ingress.enabled=false"
+  options:
+  - "ClusterIP"
+  - "NodePort"
+  - "LoadBalancer"
+  required: true
+  label: Gitlab Service Type
+  show_subquestion_if: "NodePort"
+  group: "Services and Load Balancing"
+  subquestions:
+  - variable: service.nodePorts.http
+    default: ""
+    description: "NodePort http port(to set explicitly, choose port between 30000-32767)"
+    type: int
+    min: 30000
+    max: 32767
+    show_if: "ingress.enabled=false&&serviceType=NodePort"
+    label: NodePort Http Port
+  - variable: service.nodePorts.https
+    default: ""
+    description: "NodePort https port(to set explicitly, choose port between 30000-32767)"
+    type: int
+    min: 30000
+    max: 32767
+    show_if: "ingress.enabled=false&&serviceType=NodePort"
+    label: NodePort Https Port
